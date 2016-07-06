@@ -214,14 +214,14 @@ public class BiomeBorderRenderer implements Exposable
                         BlockPos posE = new BlockPos(posX + 1, player.posY, posZ);
                         BlockPos posW = new BlockPos(posX - 1, player.posY, posZ);
                         BlockPos posS = new BlockPos(posX, player.posY, posZ + 1);
-                        int C = Biome.getIdForBiome(world.getBiomeGenForCoords(pos));
-                        int N = Biome.getIdForBiome(world.getBiomeGenForCoords(posN));
-                        int E = Biome.getIdForBiome(world.getBiomeGenForCoords(posE));
-                        int W = Biome.getIdForBiome(world.getBiomeGenForCoords(posW));
-                        int S = Biome.getIdForBiome(world.getBiomeGenForCoords(posS));
+                        int C = Biome.getIdForBiome(world.getBiome(pos));
+                        int N = Biome.getIdForBiome(world.getBiome(posN));
+                        int E = Biome.getIdForBiome(world.getBiome(posE));
+                        int W = Biome.getIdForBiome(world.getBiome(posW));
+                        int S = Biome.getIdForBiome(world.getBiome(posS));
                         double yy = 1.0D - y;
                         double yy2 = 256.0D - y;
-
+                        
                         if (!this.unlimited)
                         {
                             pos = this.getTopLiquidOrSolidBlock2(world, pos);
@@ -312,7 +312,7 @@ public class BiomeBorderRenderer implements Exposable
             if (minecraft.objectMouseOver != null && minecraft.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK && minecraft.objectMouseOver.getBlockPos() != null)
             {
                 BlockPos var9 = minecraft.objectMouseOver.getBlockPos();
-                String str = "Looking block Biome: " + world.getBiomeGenForCoords(var9).getBiomeName();
+                String str = "Looking block Biome: " + world.getBiome(var9).getBiomeName();
                 FontRenderer fontRenderer = minecraft.fontRendererObj;
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();

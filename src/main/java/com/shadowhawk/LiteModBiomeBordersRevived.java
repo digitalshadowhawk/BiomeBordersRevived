@@ -27,8 +27,8 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class LiteModBiomeBordersRevived implements PostRenderListener, HUDRenderListener, Tickable, Configurable
 {
-    public static final String NAME = "BiomeBordersRevived";
-    public static final String VERSION = "1.0.2";
+    public static final String NAME = "Biome Borders Revived";
+    public static final String VERSION = "1.0.3";
     public static KeyBinding keyBinding;
     public static LiteModBiomeBordersRevived instance;
     public static HashMap<String, Object> parse(String json)
