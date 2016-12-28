@@ -191,7 +191,7 @@ public class LiteModBiomeBordersRevived implements PostRenderListener, HUDRender
     {
         if (keyBinding.isPressed())
         {
-            this.renderer.toggleChunkBorders();
+            this.renderer.toggleBiomeBorders();
         }
     }
 
