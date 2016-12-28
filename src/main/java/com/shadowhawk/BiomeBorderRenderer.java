@@ -172,8 +172,8 @@ public class BiomeBorderRenderer implements Exposable
     {
         if (this.enabled)
         {
-            EntityPlayerSP player = minecraft.thePlayer;
-            WorldClient world = minecraft.theWorld;
+            EntityPlayerSP player = minecraft.player;
+            WorldClient world = minecraft.world;
             double x = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
             double y = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
             double z = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
@@ -307,7 +307,7 @@ public class BiomeBorderRenderer implements Exposable
         if (this.enabled)
         {
             Minecraft minecraft = Minecraft.getMinecraft();
-            WorldClient world = minecraft.theWorld;
+            WorldClient world = minecraft.world;
 
             if (minecraft.objectMouseOver != null && minecraft.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK && minecraft.objectMouseOver.getBlockPos() != null)
             {
