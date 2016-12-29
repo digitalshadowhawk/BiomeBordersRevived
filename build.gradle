@@ -21,7 +21,6 @@ apply plugin: 'net.minecraftforge.gradle.liteloader'
 version = "1.0.3"
 group = "com.shadowhawk" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BiomeBordersRevived"
-archivesBaseName = "BiomeBordersRevived"
 
 minecraft {
     version = "1.11.2"
