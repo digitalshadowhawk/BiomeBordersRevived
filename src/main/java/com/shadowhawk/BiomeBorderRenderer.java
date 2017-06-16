@@ -20,11 +20,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -190,7 +186,7 @@ public class BiomeBorderRenderer implements Exposable
             GL11.glDepthMask(false);
             GL11.glPushMatrix();
             Tessellator tesselator = Tessellator.getInstance();
-            VertexBuffer render = tesselator.getBuffer();
+            BufferBuilder render = tesselator.getBuffer();
             Vector3f hsv = this.RGB2HSV(this.lineRed, this.lineGreen, this.lineBlue);
             Vector3f rgb = this.HSV2RGB((hsv.x + 0.01F) % 1.0F, hsv.y, hsv.z);
             this.lineRed = rgb.x;
@@ -313,7 +309,7 @@ public class BiomeBorderRenderer implements Exposable
             {
                 BlockPos var9 = minecraft.objectMouseOver.getBlockPos();
                 String str = "Looking block Biome: " + world.getBiome(var9).getBiomeName();
-                FontRenderer fontRenderer = minecraft.fontRendererObj;
+                FontRenderer fontRenderer = minecraft.fontRenderer;
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

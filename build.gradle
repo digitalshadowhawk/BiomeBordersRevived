@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -23,8 +23,8 @@ group = "com.shadowhawk" // http://maven.apache.org/guides/mini/guide-naming-con
 archivesBaseName = "BiomeBordersRevived"
 
 minecraft {
-    version = "1.11.2"
-    mappings = "snapshot_20161224"
+    version = "1.12"
+    mappings = "snapshot_20170616"
     runDir = "run"
 }
 
@@ -32,7 +32,7 @@ litemod {
     json {
         name = "BiomeBordersRevived"
         author = "Shadow_Hawk"
-        mcversion = "1.11.r2"
+        mcversion = "1.12.r1"
     }
 }
 
