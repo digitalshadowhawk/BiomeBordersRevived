@@ -27,15 +27,15 @@ public class ConfigBiomeBorder implements ConfigPanel
     @Override
 	public void drawPanel(ConfigPanelHost host, int mouseX, int mouseY, float partialTicks)
     {
-        this.minecraft.fontRendererObj.drawString("Drawing radius (chunks)", 20, 25, -1);
-        this.lessRadius.drawButton(this.minecraft, mouseX, mouseY);
+        this.minecraft.fontRenderer.drawString("Drawing radius (chunks)", 20, 25, -1);
+        this.lessRadius.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
         this.radiusDisplay.drawTextBox();
-        this.moreRadius.drawButton(this.minecraft, mouseX, mouseY);
-        this.minecraft.fontRendererObj.drawString("Border line height (blocks)", 20, 70, -1);
-        this.lessLineH.drawButton(this.minecraft, mouseX, mouseY);
+        this.moreRadius.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+        this.minecraft.fontRenderer.drawString("Border line height (blocks)", 20, 70, -1);
+        this.lessLineH.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
         this.LineHDisplay.drawTextBox();
-        this.moreLineH.drawButton(this.minecraft, mouseX, mouseY);
-        this.unlimited.drawButton(this.minecraft, mouseX, mouseY);
+        this.moreLineH.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+        this.unlimited.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -135,12 +135,12 @@ public class ConfigBiomeBorder implements ConfigPanel
     {
         this.renderer = LiteModBiomeBordersRevived.instance.renderer;
         this.lessRadius = new GuiButton(0, 20, 40, 30, 20, "<");
-        this.radiusDisplay = new GuiTextField(0, this.minecraft.fontRendererObj, 60, 40, 40, 20);
+        this.radiusDisplay = new GuiTextField(0, this.minecraft.fontRenderer, 60, 40, 40, 20);
         this.radiusDisplay.setText(String.valueOf(this.renderer.radius));
         this.radiusDisplay.setFocused(false);
         this.moreRadius = new GuiButton(1, 110, 40, 30, 20, ">");
         this.lessLineH = new GuiButton(2, 20, 85, 30, 20, "<");
-        this.LineHDisplay = new GuiTextField(1, this.minecraft.fontRendererObj, 60, 85, 40, 20);
+        this.LineHDisplay = new GuiTextField(1, this.minecraft.fontRenderer, 60, 85, 40, 20);
         this.LineHDisplay.setText(String.valueOf(this.renderer.lineheight));
         this.moreLineH = new GuiButton(3, 110, 85, 30, 20, ">");
         this.unlimited = new GuiCheckbox(4, 20, 110, "Unlimited height y=0 to y=256");
