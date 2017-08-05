@@ -1,18 +1,7 @@
-package com.shadowhawk;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+package com.shadowhawk.biomeborders;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.mumfrey.liteloader.modconfig.ConfigStrategy;
-import com.mumfrey.liteloader.modconfig.Exposable;
-import com.mumfrey.liteloader.modconfig.ExposableOptions;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -20,7 +9,11 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +21,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 
-@ExposableOptions(
-    strategy = ConfigStrategy.Unversioned,
-    filename = "biomeborders.json",
-    aggressive = true
-)
-public class BiomeBorderRenderer implements Exposable
+public class BiomeBorderRenderer
 {
     public static double getDistanceSq(double x1, double z1, double x2, double z2)
     {
@@ -41,30 +29,27 @@ public class BiomeBorderRenderer implements Exposable
         double zs = z1 - z2;
         return xs * xs + zs * zs;
     }
-    @Expose
     public int radius = 4;
-    @Expose
     public float lineheight = 0.25F;
-    @Expose
     public boolean unlimited = false;
-    private boolean enabled = false;
+    private boolean visible = false;
     private float lineRed = 1.0F;
     private float lineGreen = 0.0F;
 
     private float lineBlue = 0.0F;
 
-    public BlockPos getTopLiquidOrSolidBlock(WorldClient world, BlockPos p_175672_1_)
+    public BlockPos getTopLiquidOrSolidBlock(WorldClient world, BlockPos pos)
     {
-        Chunk var2 = world.getChunkFromBlockCoords(p_175672_1_);
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
         BlockPos var3;
         BlockPos var4;
 
-        for (var3 = new BlockPos(p_175672_1_.getX(), var2.getTopFilledSegment() + 16, p_175672_1_.getZ()); var3.getY() >= 0; var3 = var4)
+        for (var3 = new BlockPos(pos.getX(), chunk.getTopFilledSegment() + 16, pos.getZ()); var3.getY() >= 0; var3 = var4)
         {
             var4 = var3.offset(EnumFacing.DOWN);
-            Material var5 = var2.getBlockState(var4).getMaterial();
+            Material material = chunk.getBlockState(var4).getMaterial();
 
-            if (var5 == Material.WATER || var5 == Material.LAVA || var5.blocksMovement() && var5 != Material.LEAVES)
+            if (material == Material.WATER || material == Material.LAVA || material.blocksMovement() && material != Material.LEAVES)
             {
                 break;
             }
@@ -73,35 +58,35 @@ public class BiomeBorderRenderer implements Exposable
         return var3;
     }
 
-    public BlockPos getTopLiquidOrSolidBlock2(WorldClient world, BlockPos p_175672_1_)
+    public BlockPos getTopLiquidOrSolidBlock2(WorldClient world, BlockPos pos)
     {
-        Chunk var2 = world.getChunkFromBlockCoords(p_175672_1_);
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
         boolean inBlock = true;
         BlockPos var3;
         BlockPos var4;
 
-        for (var3 = new BlockPos(p_175672_1_.getX(), p_175672_1_.getY() + 3, p_175672_1_.getZ()); var3.getY() >= 0; var3 = var4)
+        for (var3 = new BlockPos(pos.getX(), pos.getY() + 3, pos.getZ()); var3.getY() >= 0; var3 = var4)
         {
             var4 = var3.offset(EnumFacing.DOWN);
-            Material var5;
-            boolean Dn;
+            Material material;
+            boolean bool;
 
             if (inBlock)
             {
-                var5 = var2.getBlockState(var3).getMaterial();
-                Dn = var5 == Material.WATER || var5 == Material.LAVA || var5.blocksMovement() && var5 != Material.LEAVES;
+                material = chunk.getBlockState(var3).getMaterial();
+                bool = material == Material.WATER || material == Material.LAVA || material.blocksMovement() && material != Material.LEAVES;
 
-                if (Dn)
+                if (bool)
                 {
                     continue;
                 }
             }
 
             inBlock = false;
-            var5 = var2.getBlockState(var4).getMaterial();
-            Dn = var5 == Material.WATER || var5 == Material.LAVA || var5.blocksMovement() && var5 != Material.LEAVES;
+            material = chunk.getBlockState(var4).getMaterial();
+            bool = material == Material.WATER || material == Material.LAVA || material.blocksMovement() && material != Material.LEAVES;
 
-            if (Dn)
+            if (bool)
             {
                 break;
             }
@@ -166,7 +151,7 @@ public class BiomeBorderRenderer implements Exposable
 
     public void render(Minecraft minecraft, float partialTicks)
     {
-        if (this.enabled)
+        if (this.visible)
         {
             EntityPlayerSP player = minecraft.player;
             WorldClient world = minecraft.world;
@@ -300,15 +285,15 @@ public class BiomeBorderRenderer implements Exposable
 
     public void renderBiomeName(int screenWidth, int screenHeight)
     {
-        if (this.enabled)
+        if (this.visible)
         {
             Minecraft minecraft = Minecraft.getMinecraft();
             WorldClient world = minecraft.world;
 
             if (minecraft.objectMouseOver != null && minecraft.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK && minecraft.objectMouseOver.getBlockPos() != null)
             {
-                BlockPos var9 = minecraft.objectMouseOver.getBlockPos();
-                String str = "Looking block Biome: " + world.getBiome(var9).getBiomeName();
+                BlockPos pos = minecraft.objectMouseOver.getBlockPos();
+                String str = "Looking block Biome: " + world.getBiome(pos).getBiomeName();
                 FontRenderer fontRenderer = minecraft.fontRenderer;
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();
@@ -365,59 +350,29 @@ public class BiomeBorderRenderer implements Exposable
         return new Vector3f(h, s, max);
     }
 
-    public void saveConf()
-    {
-        String jsonname = LiteModBiomeBordersRevived.instance.confpath + "\\biomeborder.json";
-        File file = new File(jsonname);
-
-        if (file.canWrite())
-        {
-            try
-            {
-                FileWriter filewriter = new FileWriter(file);
-                Gson e = (new GsonBuilder()).excludeFieldsWithoutExposeAnnotation().create();
-                String json = e.toJson(this);
-
-                try
-                {
-                    filewriter.write(json);
-                }
-                catch (IOException var11)
-                {
-                    var11.printStackTrace();
-                }
-                finally
-                {
-                    filewriter.close();
-                }
-            }
-            catch (IOException var13)
-            {
-                var13.printStackTrace();
-            }
-        }
-    }
-
     public void setLineheight(float newVal)
     {
         this.lineheight = newVal;
-        this.saveConf();
     }
 
     public void setRadius(int newVal)
     {
         this.radius = newVal;
-        this.saveConf();
     }
 
     public void setUnlimited(boolean newVal)
     {
         this.unlimited = newVal;
-        this.saveConf();
     }
 
-    public void toggleBiomeBorders()
+    @Deprecated
+    public boolean toggleBiomeBorders()
     {
-        this.enabled = !this.enabled;
+        this.visible = !this.visible;
+        return this.visible;
+    }
+    
+    public void setVisible(boolean visible) {
+    	this.visible = visible;
     }
 }
